@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -83,9 +84,29 @@ func untartar(tarName, xpath string, allowedFiles []string) (err error) {
 	}
 	return nil
 }
+
+func GetFilesInFolder(root string) (files map[string]bool) {
+	files = make(map[string]bool)
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if !info.IsDir() {
+			fmt.Println(info.Name())
+			files[path] = true
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	return files
+}
+
 func main() {
-	fmt.Println("hello world write files to data directory ")
+	//fmt.Println("hello world write files to data directory ")
 
-	untartar("data/example.tar.gz", "data", []string{"file2.txt", "file3.txt"})
-
+	//untartar("data/example.tar.gz", "data", []string{"file2.txt", "file3.txt"})
+	path, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+	GetFilesInFolder(path + "/data")
 }
